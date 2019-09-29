@@ -40,16 +40,16 @@ for i in range(num_cells):
         V = np.hstack((f[cycles['V'][j,0]][...]))
         dQdV = np.hstack((f[cycles['discharge_dQdV'][j,0]][...]))
         t = np.hstack((f[cycles['t'][j,0]][...]))
-        cd = {'I': I, 'Qc': Qc, 'Qd': Qd, 'Qdlin': Qdlin, 'T': T, 'Tdlin': Tdlin, 'V':V, 'dQdV': dQdV, 't':t}
-        cycle_dict[str(j)] = cd
+        cycle_dict= {'I': I, 'Qc': Qc, 'Qd': Qd, 'Qdlin': Qdlin, 'T': T, 'Tdlin': Tdlin, 'V':V, 'dQdV': dQdV, 't':t}
 
-    cell_dict = {'cycle_life': cl, 'charge_policy':policy, 'summary': summary, 'cycles': cycle_dict} 
+    cell_dict = {'cycle_life': cl, 'charge_policy':policy, 'summary': summary, 'cycles': cycle_dict}
     key = 'b1c' + str(i)
     bat_dict[key]=cell_dict
 
-bat_dict.keys()
 
-plt.plot(bat_dict['b1c43']['summary']['cycle'], bat_dict['b1c43']['summary']['QD'])
+bat_dict.keys()#"'b1c0','b1c1','b1c2'..."
+
+plt.plot(bat_dict['b1c43']['cycles']['t'], bat_dict['b1c43']['cycles']['T'])
 plt.show()
 
 with open('batch1.pkl','wb') as fp:
