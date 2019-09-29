@@ -43,7 +43,7 @@ for i in range(num_cells):
         cd = {'I': I, 'Qc': Qc, 'Qd': Qd, 'Qdlin': Qdlin, 'T': T, 'Tdlin': Tdlin, 'V':V, 'dQdV': dQdV, 't':t}
         cycle_dict[str(j)] = cd
 
-    cell_dict = {'cycle_life': cl,  'summary': summary, 'cycles': cycle_dict} #'charge_policy':policy,
+    cell_dict = {'cycle_life': cl, 'charge_policy':policy, 'summary': summary, 'cycles': cycle_dict} 
     key = 'b1c' + str(i)
     bat_dict[key]=cell_dict
 
