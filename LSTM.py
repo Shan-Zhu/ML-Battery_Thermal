@@ -7,28 +7,28 @@ from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 from sklearn.preprocessing import MinMaxScaler
 
-# 读取文件
-df = pd.read_csv('C:/Users/Administrator/Desktop/LSTM-test/test-1.csv')
-
-# df['Date'] = pd.to_datetime(df.Date,format='%Y-%m-%d')
-# df.index = df['Date']
-
+# read data
+df = pd.read_csv('LSTM-data-Battery-M-all.csv')
+path_save0='...'
+path_save1='...'
+path_save2='...'
 #creating dataframe
 data = df.sort_index(ascending=True, axis=0)
-new_data = pd.DataFrame(index=range(0,len(df)),columns=['Test_Time', 'Temperature'])
+new_data = pd.DataFrame(index=range(0,len(df)),columns=['Cycle', 'Battery-M'])
 for i in range(0,len(data)):
-    new_data['Test_Time'][i] = data['Test_Time'][i]
-    new_data['Temperature'][i] = data['Temperature'][i]
+    new_data['Cycle'][i] = data['Cycle'][i]
+    new_data['Battery-M'][i] = data['Battery-M'][i]
 
 #setting index
-# new_data.index = new_data.Date
-new_data.drop('Test_Time', axis=1, inplace=True)
+new_data.drop('Cycle', axis=1, inplace=True)
 
 #creating train and test sets
 dataset = new_data.values
 
-train = dataset[0:8000,:]
-valid = dataset[8000:,:]
+#split data
+split_data=int(len(data)*0.2)  
+train = dataset[0:split_data,:]
+valid = dataset[split_data:,:]
 
 #converting dataset into x_train and y_train
 scaler = MinMaxScaler(feature_range=(0, 1))
@@ -51,6 +51,7 @@ model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
 model.fit(x_train, y_train, epochs=2, batch_size=1, verbose=2)
 
+# predict
 inputs = new_data[len(new_data) - len(valid) - 200:].values
 inputs = inputs.reshape(-1,1)
 inputs  = scaler.transform(inputs)
@@ -68,9 +69,15 @@ rms = np.sqrt(np.mean(np.power((valid-closing_price),2)))
 print (rms)
 
 #for plotting
-train = new_data[:8000]
-valid = new_data[8000:]
+train = new_data[:split_data]
+valid = new_data[split_data:]
 valid['Predictions'] = closing_price
-plt.plot(train['Temperature'])
-plt.plot(valid[['Temperature','Predictions']])
+plt.plot(train['Battery-M'],lw=3)#time,t
+plt.plot(valid['Battery-M'],lw=3)
+plt.plot(valid['Predictions'],lw=3)
+# plt.plot(time,valid['Predictions'],lw=5)
+train['Battery-M'].to_csv(path_save0,index=False,sep=';')
+valid['Battery-M'].to_csv(path_save1,index=False,sep=';')
+valid['Predictions'].to_csv(path_save2,index=False,sep=';')
+
 plt.show()
