@@ -7,3 +7,5 @@ LSTM-data-Battery-M-all.csv was the example for LSTM.py
 Decomposition.py was used for analyzing the heat generation of battery and distingushing the types of heat.
 
 Batter-M-Segment101.csv was the example for Decomposition.py
+
+More information can contact with: shanzhu@tju.edu.cn
