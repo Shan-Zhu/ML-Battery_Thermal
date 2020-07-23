@@ -75,7 +75,7 @@ valid['Predictions'] = closing_price
 plt.plot(train['Battery-M'],lw=3)#time,t
 plt.plot(valid['Battery-M'],lw=3)
 plt.plot(valid['Predictions'],lw=3)
-# plt.plot(time,valid['Predictions'],lw=5)
+
 train['Battery-M'].to_csv(path_save0,index=False,sep=';')
 valid['Battery-M'].to_csv(path_save1,index=False,sep=';')
 valid['Predictions'].to_csv(path_save2,index=False,sep=';')
