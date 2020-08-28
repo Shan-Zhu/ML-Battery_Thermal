@@ -1,0 +1,72 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.api import ExponentialSmoothing, SimpleExpSmoothing, Holt
+import statsmodels.api as sm
+
+#Importing data
+df = pd.read_csv('C:/Users/Administrator/Desktop/JPS_Response/LSTM-data.csv')
+
+split_data=int(len(df)*0.8)  
+
+train = df[0:split_data]
+test = df[split_data:]
+
+fig=plt.figure(num=1,figsize=(20,4.5))
+plt.ylim(34, 42)
+plt.xlim(-10,1200)
+ax=plt.gca()
+bwith = 6 #all4 part6
+ax.spines['bottom'].set_linewidth(bwith)
+ax.spines['left'].set_linewidth(bwith)
+ax.spines['top'].set_linewidth(bwith)
+ax.spines['right'].set_linewidth(bwith)
+plt.subplots_adjust(left=0.2, right=0.9, top=0.95, bottom=0.15)
+plt.tick_params(labelsize=40,which='major',width=5,length=7)
+plt.xlabel('Cycle',fontsize=45)    
+plt.ylabel('Temp ($^\circ$C)',fontsize=45)   
+
+#raw data
+train.Temperature.plot(lw=6,label='Training')
+test.Temperature.plot(lw=6,color='g',label='Validation')
+
+#Naive Forecast
+dd= np.asarray(train.Temperature)
+y_hat = test.copy()
+y_hat['naive'] = dd[len(dd)-1]
+plt.plot(train.index, train['Temperature'],lw=6, label='Train')
+plt.plot(test.index,test['Temperature'], lw=6,label='Test')
+plt.plot(y_hat.index,y_hat['naive'],lw=6, label='Naive Forecast')
+
+#Average Forecast
+y_hat_avg = test.copy()
+y_hat_avg['avg_forecast'] = train['Temperature'].mean()
+plt.plot(train['Temperature'], lw=6)
+plt.plot(test['Temperature'], lw=6)
+plt.plot(y_hat_avg['avg_forecast'],lw=6)
+
+#Moving Average
+y_hat_avg = test.copy()
+y_hat_avg['moving_avg_forecast'] = train['Temperature'].rolling(60).mean().iloc[-1]
+plt.plot(train['Temperature'], lw=6)
+plt.plot(test['Temperature'], lw=6)
+plt.plot(y_hat_avg['moving_avg_forecast'], lw=6)
+
+#Simple Exponential Smoothing
+y_hat_avg = test.copy()
+fit2 = SimpleExpSmoothing(np.asarray(train['Temperature'])).fit(smoothing_level=0.6,optimized=False)
+y_hat_avg['SES'] = fit2.forecast(len(test))
+plt.plot(train['Temperature'], lw=6)
+plt.plot(test['Temperature'], lw=6)
+plt.plot(y_hat_avg['SES'], lw=6)
+
+# Holt’s Linear Trend method
+y_hat_avg = test.copy()
+fit1 = Holt(np.asarray(train['Temperature'])).fit(smoothing_level = 0.1,smoothing_slope = 0.05)
+y_hat_avg['Holt_linear'] = fit1.forecast(len(test))
+plt.plot(train['Temperature'], lw=6)
+plt.plot(test['Temperature'], lw=6)
+plt.plot(y_hat_avg['Holt_linear'], lw=6)
+
+
+plt.show()
